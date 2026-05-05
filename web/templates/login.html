@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion - Forum</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Connexion</h1>
+        {{if .Error}}
+        <div class="error">{{.Error}}</div>
+        {{end}}
+        <form method="post" action="/login">
+            <label>Nom d'utilisateur
+                <input type="text" name="username" required>
+            </label>
+            <label>Mot de passe
+                <input type="password" name="password" required>
+            </label>
+            <button type="submit">Se connecter</button>
+        </form>
+        <p><a href="/register">Pas encore inscrit ? Crée un compte</a></p>
+        <p><a href="/">Retour à l'accueil</a></p>
+    </div>
+</body>
+</html>

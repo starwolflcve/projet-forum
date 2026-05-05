@@ -1,0 +1,1 @@
+console.log("Forum JS chargé");

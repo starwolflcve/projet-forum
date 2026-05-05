@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription - Forum</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Inscription</h1>
+        {{if .Error}}
+        <div class="error">{{.Error}}</div>
+        {{end}}
+        <form method="post" action="/register">
+            <label>Prénom
+                <input type="text" name="first_name" value="{{.FirstName}}" required>
+            </label>
+            <label>Nom
+                <input type="text" name="last_name" value="{{.LastName}}" required>
+            </label>
+            <label>Nom d'utilisateur
+                <input type="text" name="username" value="{{.Username}}" required>
+            </label>
+            <label>Mot de passe
+                <input type="password" name="password" required>
+            </label>
+            <label>Âge
+                <input type="number" name="age" value="{{.Age}}" required>
+            </label>
+            <label>Date de naissance
+                <input type="date" name="birthdate" value="{{.Birthdate}}" required>
+            </label>
+            <label>Pays
+                <input type="text" name="country" value="{{.Country}}" required>
+            </label>
+            <label>Adresse mail
+                <input type="email" name="email" value="{{.Email}}" required>
+            </label>
+            <label>Numéro de téléphone
+                <input type="tel" name="phone" value="{{.Phone}}" required>
+            </label>
+            <label>Genre
+                <select name="gender" required>
+                    <option value="">Sélectionner</option>
+                    <option value="Homme" {{if eq .Gender "Homme"}}selected{{end}}>Homme</option>
+                    <option value="Femme" {{if eq .Gender "Femme"}}selected{{end}}>Femme</option>
+                    <option value="Autre" {{if eq .Gender "Autre"}}selected{{end}}>Autre</option>
+                </select>
+            </label>
+            <button type="submit">S'inscrire</button>
+        </form>
+        <p><a href="/login">Déjà inscrit ? Connecte-toi</a></p>
+        <p><a href="/">Retour à l'accueil</a></p>
+    </div>
+</body>
+</html>
