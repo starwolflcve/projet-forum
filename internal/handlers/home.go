@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -124,7 +125,10 @@ func (a *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		password := r.FormValue("password")
 
+		log.Printf("Registration attempt: %+v", form)
+
 		if err := a.validateRegistration(&form, password); err != nil {
+			log.Printf("Validation error: %v", err)
 			form.Error = err.Error()
 			a.renderTemplate(w, "register.html", form)
 			return
@@ -132,6 +136,7 @@ func (a *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 		age, _ := strconv.Atoi(form.Age)
 		if err := a.insertUser(form, password, age); err != nil {
+			log.Printf("Database insertion error: %v", err)
 			if strings.Contains(err.Error(), "UNIQUE") {
 				form.Error = "Ce nom d'utilisateur est déjà utilisé"
 				a.renderTemplate(w, "register.html", form)
@@ -141,6 +146,7 @@ func (a *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		log.Printf("User %s registered successfully", form.Username)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	default:
