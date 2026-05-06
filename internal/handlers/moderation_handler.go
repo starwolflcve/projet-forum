@@ -85,3 +85,55 @@ func ModerationDashboardHandler(db *sql.DB, tmpl *template.Template) http.Handle
 		}
 	}
 }
+
+func ApproveReportHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+			return
+		}
+
+		reviewedBy := 1 // temporaire, à remplacer par l'admin/modo connecté
+		reportIDStr := r.FormValue("report_id")
+
+		reportID, err := strconv.Atoi(reportIDStr)
+		if err != nil {
+			http.Error(w, "ID de signalement invalide", http.StatusBadRequest)
+			return
+		}
+
+		err = database.UpdateReportStatus(db, reportID, models.ReportStatusReviewed, reviewedBy)
+		if err != nil {
+			http.Error(w, "Erreur lors de la validation du signalement", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/moderation", http.StatusSeeOther)
+	}
+}
+
+func RejectReportHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+			return
+		}
+
+		reviewedBy := 1 // temporaire, à remplacer par l'admin/modo connecté
+		reportIDStr := r.FormValue("report_id")
+
+		reportID, err := strconv.Atoi(reportIDStr)
+		if err != nil {
+			http.Error(w, "ID de signalement invalide", http.StatusBadRequest)
+			return
+		}
+
+		err = database.UpdateReportStatus(db, reportID, models.ReportStatusRejected, reviewedBy)
+		if err != nil {
+			http.Error(w, "Erreur lors du rejet du signalement", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/moderation", http.StatusSeeOther)
+	}
+}
