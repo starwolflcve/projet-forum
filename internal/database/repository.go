@@ -1,7 +1,9 @@
 package database
 
-import ("database/sql"
+import (
+	"database/sql"
 	"time"
+
 	"forum/internal/models"
 )
 
@@ -76,12 +78,24 @@ func InitP3Tables(db *sql.DB) error {
 	return nil
 }
 
-func CreateReport(db *sql.DB, reporterID int, targetType string, targetID int, reason string) error {
+func CreateReport(db *sql.DB, report *models.Report) error {
 	query := `
-	INSERT INTO reports (reporter_id, target_type, target_id, reason, status)
-	VALUES (?, ?, ?, ?, ?)
+	INSERT INTO reports (reporter_id, target_type, target_id, reason, status, reviewed_by, created_at, reviewed_at)
+	VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 	`
-	_, err := db.Exec(query, reporterID, targetType, targetID, reason, models.ReportStatusPending)
+
+	_, err := db.Exec(
+		query,
+		report.ReporterID,
+		report.TargetType,
+		report.TargetID,
+		report.Reason,
+		report.Status,
+		report.ReviewedBy,
+		report.CreatedAt,
+		report.ReviewedAt,
+	)
+
 	return err
 }
 
@@ -146,16 +160,27 @@ func UpdateReportStatus(db *sql.DB, reportID int, status string, reviewedBy int)
 	SET status = ?, reviewed_by = ?, reviewed_at = ?
 	WHERE id = ?
 	`
+
 	_, err := db.Exec(query, status, reviewedBy, time.Now(), reportID)
 	return err
 }
 
-func CreateNotification(db *sql.DB, userID int, notificationType string, message string, relatedID int) error {
+func CreateNotification(db *sql.DB, notification *models.Notification) error {
 	query := `
-	INSERT INTO notifications (user_id, type, message, related_id, is_read)
-	VALUES (?, ?, ?, ?, 0)
+	INSERT INTO notifications (user_id, type, message, related_id, is_read, created_at)
+	VALUES (?, ?, ?, ?, ?, ?)
 	`
-	_, err := db.Exec(query, userID, notificationType, message, relatedID)
+
+	_, err := db.Exec(
+		query,
+		notification.UserID,
+		notification.Type,
+		notification.Message,
+		notification.RelatedID,
+		notification.IsRead,
+		notification.CreatedAt,
+	)
+
 	return err
 }
 
@@ -209,6 +234,7 @@ func MarkNotificationAsRead(db *sql.DB, notificationID int, userID int) error {
 	SET is_read = 1
 	WHERE id = ? AND user_id = ?
 	`
+
 	_, err := db.Exec(query, notificationID, userID)
 	return err
 }
@@ -356,76 +382,4 @@ func ListActivityByUserID(db *sql.DB, userID int) (map[string][]models.ActivityI
 		"reactions": reactions,
 		"comments":  comments,
 	}, nil
-}
-
-func CreateNotification(db *sql.DB, notification *models.Notification) error {
-	query := `
-	INSERT INTO notifications (user_id, type, message, related_id, is_read, created_at)
-	VALUES (?, ?, ?, ?, ?, ?)
-	`
-
-	_, err := db.Exec(
-		query,
-		notification.UserID,
-		notification.Type,
-		notification.Message,
-		notification.RelatedID,
-		notification.IsRead,
-		notification.CreatedAt,
-	)
-
-	return err
-}
-
-func ListNotificationsByUserID(db *sql.DB, userID int) ([]models.Notification, error) {
-	query := `
-	SELECT id, user_id, type, message, related_id, is_read, created_at
-	FROM notifications
-	WHERE user_id = ?
-	ORDER BY created_at DESC
-	`
-
-	rows, err := db.Query(query, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var notifications []models.Notification
-
-	for rows.Next() {
-		var notification models.Notification
-
-		err := rows.Scan(
-			&notification.ID,
-			&notification.UserID,
-			&notification.Type,
-			&notification.Message,
-			&notification.RelatedID,
-			&notification.IsRead,
-			&notification.CreatedAt,
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		notifications = append(notifications, notification)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return notifications, nil
-}
-
-func MarkNotificationAsRead(db *sql.DB, notificationID int, userID int) error {
-	query := `
-	UPDATE notifications
-	SET is_read = 1
-	WHERE id = ? AND user_id = ?
-	`
-
-	_, err := db.Exec(query, notificationID, userID)
-	return err
 }
