@@ -1,0 +1,130 @@
+{{ define "activity.html" }}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .Title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            margin-top: 32px;
+            margin-bottom: 16px;
+            font-size: 22px;
+            color: #222;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .card {
+            background: #fafafa;
+            border: 1px solid #e2e2e2;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .meta {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #111;
+        }
+
+        .content {
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .reaction-like {
+            color: green;
+            font-weight: bold;
+        }
+
+        .reaction-dislike {
+            color: crimson;
+            font-weight: bold;
+        }
+
+        .empty {
+            color: #777;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ .Title }}</h1>
+
+        <h2>Posts créés</h2>
+        {{ if .Activities.posts }}
+            {{ range .Activities.posts }}
+                <div class="card">
+                    <div class="title">{{ .PostTitle }}</div>
+                    <div class="meta">Créé le : {{ .CreatedAt }}</div>
+                </div>
+            {{ end }}
+        {{ else }}
+            <p class="empty">Aucun post créé.</p>
+        {{ end }}
+
+        <h2>Réactions</h2>
+        {{ if .Activities.reactions }}
+            {{ range .Activities.reactions }}
+                <div class="card">
+                    <div class="title">{{ .PostTitle }}</div>
+                    <div class="meta">Date : {{ .CreatedAt }}</div>
+                    <div class="content">
+                        Réaction :
+                        {{ if eq .ReactionType "like" }}
+                            <span class="reaction-like">Like</span>
+                        {{ else }}
+                            <span class="reaction-dislike">Dislike</span>
+                        {{ end }}
+                    </div>
+                </div>
+            {{ end }}
+        {{ else }}
+            <p class="empty">Aucune réaction enregistrée.</p>
+        {{ end }}
+
+        <h2>Commentaires</h2>
+        {{ if .Activities.comments }}
+            {{ range .Activities.comments }}
+                <div class="card">
+                    <div class="title">Post : {{ .PostTitle }}</div>
+                    <div class="meta">Commenté le : {{ .CreatedAt }}</div>
+                    <div class="content">{{ .CommentBody }}</div>
+                </div>
+            {{ end }}
+        {{ else }}
+            <p class="empty">Aucun commentaire laissé.</p>
+        {{ end }}
+    </div>
+</body>
+</html>
+{{ end }}
