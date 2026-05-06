@@ -1,0 +1,109 @@
+{{ define "moderation.html" }}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .Title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-bottom: 24px;
+        }
+
+        .report-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background: #fafafa;
+        }
+
+        .report-meta {
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        .report-meta strong {
+            color: #111;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        button {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .approve {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .reject {
+            background: #c62828;
+            color: white;
+        }
+
+        .empty {
+            color: #666;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ .Title }}</h1>
+
+        {{ if .Reports }}
+            {{ range .Reports }}
+                <div class="report-card">
+                    <div class="report-meta"><strong>ID report :</strong> {{ .ID }}</div>
+                    <div class="report-meta"><strong>Reporter ID :</strong> {{ .ReporterID }}</div>
+                    <div class="report-meta"><strong>Type cible :</strong> {{ .TargetType }}</div>
+                    <div class="report-meta"><strong>ID cible :</strong> {{ .TargetID }}</div>
+                    <div class="report-meta"><strong>Raison :</strong> {{ .Reason }}</div>
+                    <div class="report-meta"><strong>Statut :</strong> {{ .Status }}</div>
+                    <div class="report-meta"><strong>Date :</strong> {{ .CreatedAt }}</div>
+
+                    <div class="actions">
+                        <form action="/moderation/approve" method="POST">
+                            <input type="hidden" name="report_id" value="{{ .ID }}">
+                            <button type="submit" class="approve">Approuver</button>
+                        </form>
+
+                        <form action="/moderation/reject" method="POST">
+                            <input type="hidden" name="report_id" value="{{ .ID }}">
+                            <button type="submit" class="reject">Rejeter</button>
+                        </form>
+                    </div>
+                </div>
+            {{ end }}
+        {{ else }}
+            <p class="empty">Aucun signalement en attente.</p>
+        {{ end }}
+    </div>
+</body>
+</html>
+{{ end }}
