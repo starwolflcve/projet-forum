@@ -1,0 +1,108 @@
+{{ define "admin_dashboard.html" }}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .Title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-bottom: 28px;
+            color: #111;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            background: #fafafa;
+            border: 1px solid #e2e2e2;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #222;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            min-height: 48px;
+        }
+
+        .card a {
+            display: inline-block;
+            text-decoration: none;
+            background: #1565c0;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .card a:hover {
+            background: #0d47a1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ .Title }}</h1>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Modération</h2>
+                <p>Consulter les signalements, approuver, rejeter ou supprimer les contenus signalés.</p>
+                <a href="/moderation">Ouvrir</a>
+            </div>
+
+            <div class="card">
+                <h2>Utilisateurs</h2>
+                <p>Promouvoir un utilisateur en modérateur ou retirer le rôle de modérateur.</p>
+                <a href="/admin/users">Ouvrir</a>
+            </div>
+
+            <div class="card">
+                <h2>Catégories</h2>
+                <p>Créer et supprimer les catégories du forum côté administration.</p>
+                <a href="/admin/categories">Ouvrir</a>
+            </div>
+
+            <div class="card">
+                <h2>Notifications</h2>
+                <p>Accéder à la page des notifications utilisateur liée aux bonus avancés.</p>
+                <a href="/notifications">Ouvrir</a>
+            </div>
+
+            <div class="card">
+                <h2>Activité</h2>
+                <p>Afficher la page d’activité personnelle avec posts, réactions et commentaires.</p>
+                <a href="/activity">Ouvrir</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{{ end }}

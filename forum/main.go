@@ -7,6 +7,7 @@ import (
 
 	"forum/internal/database"
 	"forum/internal/handlers"
+	"forum/internal/middleware"
 )
 
 func main() {
@@ -18,26 +19,34 @@ func main() {
 
 	tmpl := template.Must(template.ParseGlob("web/templates/pages/*.html"))
 
-	http.HandleFunc("/activity", handlers.ActivityHandler(db, tmpl))
-	http.HandleFunc("/notifications", handlers.NotificationsHandler(db, tmpl))
-	http.HandleFunc("/notifications/read", handlers.MarkNotificationAsReadHandler(db))
+	// Middlewares de protection
+	requireLogin := middleware.RequireLogin(db)
+	adminOnly := middleware.RequireRole(db, "admin")
+	adminOrModerator := middleware.RequireRole(db, "admin", "moderator")
 
-	http.HandleFunc("/moderation", handlers.ModerationDashboardHandler(db, tmpl))
-	http.HandleFunc("/moderation/report", handlers.ReportContentHandler(db))
-	http.HandleFunc("/moderation/approve", handlers.ApproveReportHandler(db))
-	http.HandleFunc("/moderation/reject", handlers.RejectReportHandler(db))
-	http.HandleFunc("/moderation/delete", handlers.DeleteReportedContentHandler(db))
+	// Advanced features : utilisateur connecté
+	http.HandleFunc("/activity", requireLogin(handlers.ActivityHandler(db, tmpl)))
+	http.HandleFunc("/notifications", requireLogin(handlers.NotificationsHandler(db, tmpl)))
+	http.HandleFunc("/notifications/read", requireLogin(handlers.MarkNotificationAsReadHandler(db)))
 
-	http.HandleFunc("/admin/categories", handlers.AdminCategoriesHandler(db, tmpl))
-	http.HandleFunc("/admin/categories/create", handlers.CreateCategoryHandler(db))
-	http.HandleFunc("/admin/categories/delete", handlers.DeleteCategoryHandler(db))
+	// Dashboard admin central
+	http.HandleFunc("/admin", adminOnly(handlers.AdminDashboardHandler(tmpl)))
 
-	http.HandleFunc("/admin/users", handlers.AdminUsersHandler(db, tmpl))
-	http.HandleFunc("/admin/users/promote", handlers.PromoteUserHandler(db))
-	http.HandleFunc("/admin/users/demote", handlers.DemoteModeratorHandler(db))
+	// Admin uniquement : gestion catégories et utilisateurs
+	http.HandleFunc("/admin/categories", adminOnly(handlers.AdminCategoriesHandler(db, tmpl)))
+	http.HandleFunc("/admin/categories/create", adminOnly(handlers.CreateCategoryHandler(db)))
+	http.HandleFunc("/admin/categories/delete", adminOnly(handlers.DeleteCategoryHandler(db)))
 
-	http.HandleFunc("/posts/delete", handlers.DeleteOwnPostHandler(db))
-	http.HandleFunc("/comments/delete", handlers.DeleteOwnCommentHandler(db))
+	http.HandleFunc("/admin/users", adminOnly(handlers.AdminUsersHandler(db, tmpl)))
+	http.HandleFunc("/admin/users/promote", adminOnly(handlers.PromoteUserHandler(db)))
+	http.HandleFunc("/admin/users/demote", adminOnly(handlers.DemoteModeratorHandler(db)))
+
+	// Modération : accessible aux modérateurs et admins
+	http.HandleFunc("/moderation", adminOrModerator(handlers.ModerationDashboardHandler(db, tmpl)))
+	http.HandleFunc("/moderation/report", adminOrModerator(handlers.ReportContentHandler(db)))
+	http.HandleFunc("/moderation/approve", adminOrModerator(handlers.ApproveReportHandler(db)))
+	http.HandleFunc("/moderation/reject", adminOrModerator(handlers.RejectReportHandler(db)))
+	http.HandleFunc("/moderation/delete", adminOrModerator(handlers.DeleteReportedContentHandler(db)))
 
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
