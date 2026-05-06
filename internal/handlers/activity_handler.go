@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"forum/internal/database"
+	"forum/internal/middleware"
 )
 
 func ActivityHandler(db *sql.DB, tmpl *template.Template) http.HandlerFunc {
@@ -15,7 +16,11 @@ func ActivityHandler(db *sql.DB, tmpl *template.Template) http.HandlerFunc {
 			return
 		}
 
-		userID := 1 // temporaire, à remplacer par l'utilisateur connecté
+		userID, err := middleware.GetUserIDFromSession(db, r)
+		if err != nil {
+			http.Error(w, "Erreur d'authentification", http.StatusUnauthorized)
+			return
+		}
 
 		activities, err := database.ListActivityByUserID(db, userID)
 		if err != nil {

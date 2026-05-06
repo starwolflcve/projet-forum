@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"forum/internal/database"
+	"forum/internal/middleware"
 )
 
 func NotificationsHandler(db *sql.DB, tmpl *template.Template) http.HandlerFunc {
@@ -16,7 +17,11 @@ func NotificationsHandler(db *sql.DB, tmpl *template.Template) http.HandlerFunc 
 			return
 		}
 
-		userID := 1 // temporaire, à remplacer par l'utilisateur connecté
+		userID, err := middleware.GetUserIDFromSession(db, r)
+		if err != nil {
+			http.Error(w, "Erreur d'authentification", http.StatusUnauthorized)
+			return
+		}
 
 		notifications, err := database.ListNotificationsByUserID(db, userID)
 		if err != nil {
@@ -44,7 +49,11 @@ func MarkNotificationAsReadHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		userID := 1 // temporaire, à remplacer par l'utilisateur connecté
+		userID, err := middleware.GetUserIDFromSession(db, r)
+		if err != nil {
+			http.Error(w, "Erreur d'authentification", http.StatusUnauthorized)
+			return
+		}
 
 		notificationIDStr := r.FormValue("notification_id")
 		notificationID, err := strconv.Atoi(notificationIDStr)

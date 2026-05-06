@@ -55,3 +55,29 @@ func RequireLogin(db *sql.DB) func(http.HandlerFunc) http.HandlerFunc {
 		}
 	}
 }
+
+func GetUserIDFromSession(db *sql.DB, r *http.Request) (int, error) {
+	cookie, err := r.Cookie("session_id")
+	if err != nil || cookie.Value == "" {
+		return 0, err
+	}
+
+	var userID int
+	var expiresAt string
+
+	err = db.QueryRow(`
+		SELECT user_id, expires_at
+		FROM sessions
+		WHERE session_id = ?
+	`, cookie.Value).Scan(&userID, &expiresAt)
+	if err != nil {
+		return 0, err
+	}
+
+	expirationTime, err := time.Parse("2006-01-02 15:04:05", expiresAt)
+	if err != nil || time.Now().After(expirationTime) {
+		return 0, err
+	}
+
+	return userID, nil
+}

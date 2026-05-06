@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"forum/internal/database"
+	"forum/internal/middleware"
 	"forum/internal/models"
 )
 
@@ -93,7 +94,12 @@ func ApproveReportHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		reviewedBy := 1 // temporaire, à remplacer par l'admin/modo connecté
+		reviewedBy, err := middleware.GetUserIDFromSession(db, r)
+		if err != nil {
+			http.Error(w, "Erreur d'authentification", http.StatusUnauthorized)
+			return
+		}
+
 		reportIDStr := r.FormValue("report_id")
 
 		reportID, err := strconv.Atoi(reportIDStr)
@@ -119,7 +125,12 @@ func RejectReportHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		reviewedBy := 1 // temporaire, à remplacer par l'admin/modo connecté
+		reviewedBy, err := middleware.GetUserIDFromSession(db, r)
+		if err != nil {
+			http.Error(w, "Erreur d'authentification", http.StatusUnauthorized)
+			return
+		}
+
 		reportIDStr := r.FormValue("report_id")
 
 		reportID, err := strconv.Atoi(reportIDStr)
@@ -176,7 +187,11 @@ func DeleteReportedContentHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		reviewedBy := 1 // temporaire, à remplacer par l'utilisateur admin/modo connecté
+		reviewedBy, err := middleware.GetUserIDFromSession(db, r)
+		if err != nil {
+			http.Error(w, "Erreur d'authentification", http.StatusUnauthorized)
+			return
+		}
 
 		err = database.UpdateReportStatus(db, reportID, models.ReportStatusReviewed, reviewedBy)
 		if err != nil {

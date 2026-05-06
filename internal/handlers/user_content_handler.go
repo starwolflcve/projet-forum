@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"forum/internal/database"
+	"forum/internal/middleware"
 )
 
 func DeleteOwnPostHandler(db *sql.DB) http.HandlerFunc {
@@ -15,7 +16,11 @@ func DeleteOwnPostHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		userID := 1 // temporaire, à remplacer par l'utilisateur connecté
+		userID, err := middleware.GetUserIDFromSession(db, r)
+		if err != nil {
+			http.Error(w, "Erreur d'authentification", http.StatusUnauthorized)
+			return
+		}
 
 		postIDStr := r.FormValue("post_id")
 		postID, err := strconv.Atoi(postIDStr)
@@ -41,7 +46,11 @@ func DeleteOwnCommentHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		userID := 1 // temporaire, à remplacer par l'utilisateur connecté
+		userID, err := middleware.GetUserIDFromSession(db, r)
+		if err != nil {
+			http.Error(w, "Erreur d'authentification", http.StatusUnauthorized)
+			return
+		}
 
 		commentIDStr := r.FormValue("comment_id")
 		commentID, err := strconv.Atoi(commentIDStr)

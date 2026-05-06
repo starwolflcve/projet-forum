@@ -17,7 +17,7 @@ func main() {
 	}
 	defer db.Close()
 
-	tmpl := template.Must(template.ParseGlob("web/templates/pages/*.html"))
+	tmpl := template.Must(template.ParseGlob("web/templates/*.html"))
 
 	// Middlewares de protection
 	requireLogin := middleware.RequireLogin(db)
