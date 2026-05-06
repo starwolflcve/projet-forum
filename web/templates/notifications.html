@@ -1,0 +1,127 @@
+{{ define "notifications.html" }}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .Title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-bottom: 24px;
+        }
+
+        .notification {
+            border: 1px solid #e3e3e3;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 14px;
+            background: #fafafa;
+        }
+
+        .notification.unread {
+            border-left: 5px solid #0077cc;
+            background: #f0f8ff;
+        }
+
+        .meta {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .message {
+            font-size: 16px;
+            color: #222;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .tag-like {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .tag-dislike {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .tag-comment {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        button {
+            background: #222;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .empty {
+            color: #777;
+            padding: 12px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ .Title }}</h1>
+
+        {{ if .Notifications }}
+            {{ range .Notifications }}
+                <div class="notification {{ if not .IsRead }}unread{{ end }}">
+                    <div class="meta">Reçue le : {{ .CreatedAt }}</div>
+
+                    {{ if eq .Type "like" }}
+                        <div class="tag tag-like">Like</div>
+                    {{ else if eq .Type "dislike" }}
+                        <div class="tag tag-dislike">Dislike</div>
+                    {{ else if eq .Type "comment" }}
+                        <div class="tag tag-comment">Commentaire</div>
+                    {{ else }}
+                        <div class="tag">Notification</div>
+                    {{ end }}
+
+                    <div class="message">{{ .Message }}</div>
+
+                    {{ if not .IsRead }}
+                        <form action="/notifications/read" method="POST">
+                            <input type="hidden" name="notification_id" value="{{ .ID }}">
+                            <button type="submit">Marquer comme lu</button>
+                        </form>
+                    {{ end }}
+                </div>
+            {{ end }}
+        {{ else }}
+            <p class="empty">Aucune notification pour le moment.</p>
+        {{ end }}
+    </div>
+</body>
+</html>
+{{ end }}
