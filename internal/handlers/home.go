@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -34,10 +33,7 @@ type RegisterForm struct {
 }
 
 func New(db *sql.DB) (*App, error) {
-	funcs := template.FuncMap{
-		"eq": func(a, b string) bool { return a == b },
-	}
-	templates, err := template.New("app").Funcs(funcs).ParseGlob("web/templates/*.html")
+	templates, err := template.ParseGlob("web/templates/*.html")
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +49,7 @@ func (a *App) HomeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 		return
 	}
-	a.renderTemplate(w, "index.html", nil)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
 func (a *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -125,10 +121,7 @@ func (a *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		password := r.FormValue("password")
 
-		log.Printf("Registration attempt: %+v", form)
-
 		if err := a.validateRegistration(&form, password); err != nil {
-			log.Printf("Validation error: %v", err)
 			form.Error = err.Error()
 			a.renderTemplate(w, "register.html", form)
 			return
@@ -136,7 +129,6 @@ func (a *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 		age, _ := strconv.Atoi(form.Age)
 		if err := a.insertUser(form, password, age); err != nil {
-			log.Printf("Database insertion error: %v", err)
 			if strings.Contains(err.Error(), "UNIQUE") {
 				form.Error = "Ce nom d'utilisateur est déjà utilisé"
 				a.renderTemplate(w, "register.html", form)
@@ -146,7 +138,6 @@ func (a *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Printf("User %s registered successfully", form.Username)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	default:
