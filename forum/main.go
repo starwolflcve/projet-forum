@@ -32,6 +32,10 @@ func main() {
 	http.HandleFunc("/admin/categories/create", handlers.CreateCategoryHandler(db))
 	http.HandleFunc("/admin/categories/delete", handlers.DeleteCategoryHandler(db))
 
+	http.HandleFunc("/admin/users", handlers.AdminUsersHandler(db, tmpl))
+	http.HandleFunc("/admin/users/promote", handlers.PromoteUserHandler(db))
+	http.HandleFunc("/admin/users/demote", handlers.DemoteModeratorHandler(db))
+
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

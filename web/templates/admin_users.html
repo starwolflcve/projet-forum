@@ -1,0 +1,117 @@
+{{ define "admin_users.html" }}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .Title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-bottom: 24px;
+        }
+
+        .user-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: #fafafa;
+            padding: 16px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .username {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .email, .role {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .promote {
+            background: #2e7d32;
+        }
+
+        .demote {
+            background: #c62828;
+        }
+
+        .empty {
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ .Title }}</h1>
+
+        {{ if .Users }}
+            {{ range .Users }}
+                <div class="user-card">
+                    <div class="info">
+                        <span class="username">{{ .Username }}</span>
+                        <span class="email">{{ .Email }}</span>
+                        <span class="role">Rôle : {{ .Role }}</span>
+                    </div>
+
+                    <div class="actions">
+                        {{ if eq .Role "user" }}
+                            <form action="/admin/users/promote" method="POST">
+                                <input type="hidden" name="user_id" value="{{ .ID }}">
+                                <button type="submit" class="promote">Promouvoir modérateur</button>
+                            </form>
+                        {{ end }}
+
+                        {{ if eq .Role "moderator" }}
+                            <form action="/admin/users/demote" method="POST">
+                                <input type="hidden" name="user_id" value="{{ .ID }}">
+                                <button type="submit" class="demote">Retirer le rôle</button>
+                            </form>
+                        {{ end }}
+                    </div>
+                </div>
+            {{ end }}
+        {{ else }}
+            <p class="empty">Aucun utilisateur trouvé.</p>
+        {{ end }}
+    </div>
+</body>
+</html>
+{{ end }}

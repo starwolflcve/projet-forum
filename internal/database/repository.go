@@ -443,3 +443,51 @@ func ListCategories(db *sql.DB) ([]models.Category, error) {
 
 	return categories, nil
 }
+
+func UpdateUserRole(db *sql.DB, userID int, role string) error {
+	query := `
+	UPDATE users
+	SET role = ?
+	WHERE id = ?
+	`
+	_, err := db.Exec(query, role, userID)
+	return err
+}
+
+func ListUsers(db *sql.DB) ([]models.User, error) {
+	query := `
+	SELECT id, username, email, role
+	FROM users
+	ORDER BY username ASC
+	`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []models.User
+
+	for rows.Next() {
+		var user models.User
+
+		err := rows.Scan(
+			&user.ID,
+			&user.Username,
+			&user.Email,
+			&user.Role,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}

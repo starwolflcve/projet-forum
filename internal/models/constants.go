@@ -13,6 +13,11 @@ const (
 )
 
 const (
+	ReactionLike    = "like"
+	ReactionDislike = "dislike"
+)
+
+const (
 	ReportReasonIrrelevant = "irrelevant"
 	ReportReasonObscene    = "obscene"
 	ReportReasonIllegal    = "illegal"
@@ -23,10 +28,4 @@ const (
 	ReportStatusPending  = "pending"
 	ReportStatusReviewed = "reviewed"
 	ReportStatusRejected = "rejected"
-)
-
-const (
-	NotificationTypeLike    = "like"
-	NotificationTypeDislike = "dislike"
-	NotificationTypeComment = "comment"
 )
