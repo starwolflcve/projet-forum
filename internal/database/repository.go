@@ -491,3 +491,21 @@ func ListUsers(db *sql.DB) ([]models.User, error) {
 
 	return users, nil
 }
+
+func DeleteOwnPostByID(db *sql.DB, postID int, userID int) error {
+	query := `
+	DELETE FROM posts
+	WHERE id = ? AND user_id = ?
+	`
+	_, err := db.Exec(query, postID, userID)
+	return err
+}
+
+func DeleteOwnCommentByID(db *sql.DB, commentID int, userID int) error {
+	query := `
+	DELETE FROM comments
+	WHERE id = ? AND user_id = ?
+	`
+	_, err := db.Exec(query, commentID, userID)
+	return err
+}

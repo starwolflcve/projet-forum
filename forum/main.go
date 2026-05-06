@@ -36,6 +36,9 @@ func main() {
 	http.HandleFunc("/admin/users/promote", handlers.PromoteUserHandler(db))
 	http.HandleFunc("/admin/users/demote", handlers.DemoteModeratorHandler(db))
 
+	http.HandleFunc("/posts/delete", handlers.DeleteOwnPostHandler(db))
+	http.HandleFunc("/comments/delete", handlers.DeleteOwnCommentHandler(db))
+
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

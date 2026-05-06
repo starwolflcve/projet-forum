@@ -74,6 +74,32 @@
             color: #777;
             padding: 10px 0;
         }
+
+        .actions {
+            margin-top: 14px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #c62828;
+        }
+
+        .btn-edit {
+            background: #1565c0;
+            text-decoration: none;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -86,6 +112,15 @@
                 <div class="card">
                     <div class="title">{{ .PostTitle }}</div>
                     <div class="meta">Créé le : {{ .CreatedAt }}</div>
+
+                    <div class="actions">
+                        <a href="/posts/edit?id={{ .PostID }}" class="btn btn-edit">Modifier</a>
+
+                        <form action="/posts/delete" method="POST" style="margin:0;">
+                            <input type="hidden" name="post_id" value="{{ .PostID }}">
+                            <button type="submit" class="btn btn-delete">Supprimer</button>
+                        </form>
+                    </div>
                 </div>
             {{ end }}
         {{ else }}
@@ -119,6 +154,15 @@
                     <div class="title">Post : {{ .PostTitle }}</div>
                     <div class="meta">Commenté le : {{ .CreatedAt }}</div>
                     <div class="content">{{ .CommentBody }}</div>
+
+                    <div class="actions">
+                        <a href="/comments/edit?id={{ .CommentID }}" class="btn btn-edit">Modifier</a>
+
+                        <form action="/comments/delete" method="POST" style="margin:0;">
+                            <input type="hidden" name="comment_id" value="{{ .CommentID }}">
+                            <button type="submit" class="btn btn-delete">Supprimer</button>
+                        </form>
+                    </div>
                 </div>
             {{ end }}
         {{ else }}
