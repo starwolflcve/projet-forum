@@ -383,3 +383,15 @@ func ListActivityByUserID(db *sql.DB, userID int) (map[string][]models.ActivityI
 		"comments":  comments,
 	}, nil
 }
+
+func DeletePostByID(db *sql.DB, postID int) error {
+	query := `DELETE FROM posts WHERE id = ?`
+	_, err := db.Exec(query, postID)
+	return err
+}
+
+func DeleteCommentByID(db *sql.DB, commentID int) error {
+	query := `DELETE FROM comments WHERE id = ?`
+	_, err := db.Exec(query, commentID)
+	return err
+}

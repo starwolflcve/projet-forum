@@ -137,3 +137,53 @@ func RejectReportHandler(db *sql.DB) http.HandlerFunc {
 		http.Redirect(w, r, "/moderation", http.StatusSeeOther)
 	}
 }
+
+func DeleteReportedContentHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+			return
+		}
+
+		reportIDStr := r.FormValue("report_id")
+		targetType := r.FormValue("target_type")
+		targetIDStr := r.FormValue("target_id")
+
+		reportID, err := strconv.Atoi(reportIDStr)
+		if err != nil {
+			http.Error(w, "ID de signalement invalide", http.StatusBadRequest)
+			return
+		}
+
+		targetID, err := strconv.Atoi(targetIDStr)
+		if err != nil {
+			http.Error(w, "ID de cible invalide", http.StatusBadRequest)
+			return
+		}
+
+		switch targetType {
+		case "post":
+			err = database.DeletePostByID(db, targetID)
+		case "comment":
+			err = database.DeleteCommentByID(db, targetID)
+		default:
+			http.Error(w, "Type de cible invalide", http.StatusBadRequest)
+			return
+		}
+
+		if err != nil {
+			http.Error(w, "Erreur lors de la suppression du contenu", http.StatusInternalServerError)
+			return
+		}
+
+		reviewedBy := 1 // temporaire, à remplacer par l'utilisateur admin/modo connecté
+
+		err = database.UpdateReportStatus(db, reportID, models.ReportStatusReviewed, reviewedBy)
+		if err != nil {
+			http.Error(w, "Erreur lors de la mise à jour du signalement", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/moderation", http.StatusSeeOther)
+	}
+}

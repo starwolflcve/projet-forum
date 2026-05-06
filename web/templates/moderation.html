@@ -88,16 +88,23 @@
                     <div class="report-meta"><strong>Date :</strong> {{ .CreatedAt }}</div>
 
                     <div class="actions">
-                        <form action="/moderation/approve" method="POST">
-                            <input type="hidden" name="report_id" value="{{ .ID }}">
-                            <button type="submit" class="approve">Approuver</button>
-                        </form>
+    <form action="/moderation/approve" method="POST">
+        <input type="hidden" name="report_id" value="{{ .ID }}">
+        <button type="submit" class="approve">Approuver</button>
+    </form>
 
-                        <form action="/moderation/reject" method="POST">
-                            <input type="hidden" name="report_id" value="{{ .ID }}">
-                            <button type="submit" class="reject">Rejeter</button>
-                        </form>
-                    </div>
+    <form action="/moderation/reject" method="POST">
+        <input type="hidden" name="report_id" value="{{ .ID }}">
+        <button type="submit" class="reject">Rejeter</button>
+    </form>
+
+    <form action="/moderation/delete" method="POST">
+        <input type="hidden" name="report_id" value="{{ .ID }}">
+        <input type="hidden" name="target_type" value="{{ .TargetType }}">
+        <input type="hidden" name="target_id" value="{{ .TargetID }}">
+        <button type="submit" style="background:#111;color:white;">Supprimer le contenu</button>
+    </form>
+</div>
                 </div>
             {{ end }}
         {{ else }}

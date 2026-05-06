@@ -26,6 +26,7 @@ func main() {
 	http.HandleFunc("/moderation/report", handlers.ReportContentHandler(db))
 	http.HandleFunc("/moderation/approve", handlers.ApproveReportHandler(db))
 	http.HandleFunc("/moderation/reject", handlers.RejectReportHandler(db))
+	http.HandleFunc("/moderation/delete", handlers.DeleteReportedContentHandler(db))
 
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
