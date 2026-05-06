@@ -357,3 +357,75 @@ func ListActivityByUserID(db *sql.DB, userID int) (map[string][]models.ActivityI
 		"comments":  comments,
 	}, nil
 }
+
+func CreateNotification(db *sql.DB, notification *models.Notification) error {
+	query := `
+	INSERT INTO notifications (user_id, type, message, related_id, is_read, created_at)
+	VALUES (?, ?, ?, ?, ?, ?)
+	`
+
+	_, err := db.Exec(
+		query,
+		notification.UserID,
+		notification.Type,
+		notification.Message,
+		notification.RelatedID,
+		notification.IsRead,
+		notification.CreatedAt,
+	)
+
+	return err
+}
+
+func ListNotificationsByUserID(db *sql.DB, userID int) ([]models.Notification, error) {
+	query := `
+	SELECT id, user_id, type, message, related_id, is_read, created_at
+	FROM notifications
+	WHERE user_id = ?
+	ORDER BY created_at DESC
+	`
+
+	rows, err := db.Query(query, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var notifications []models.Notification
+
+	for rows.Next() {
+		var notification models.Notification
+
+		err := rows.Scan(
+			&notification.ID,
+			&notification.UserID,
+			&notification.Type,
+			&notification.Message,
+			&notification.RelatedID,
+			&notification.IsRead,
+			&notification.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		notifications = append(notifications, notification)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return notifications, nil
+}
+
+func MarkNotificationAsRead(db *sql.DB, notificationID int, userID int) error {
+	query := `
+	UPDATE notifications
+	SET is_read = 1
+	WHERE id = ? AND user_id = ?
+	`
+
+	_, err := db.Exec(query, notificationID, userID)
+	return err
+}
