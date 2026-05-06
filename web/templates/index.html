@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CTF & Cybersecurity Forum</title>
+  <link rel="stylesheet" href="../static/css/style.css" />
+  <style>
+    .platforms-nav {
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    .platforms-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 15px;
+    }
+
+    .platform-btn {
+      padding: 10px 18px;
+      border: 2px solid #00ff88;
+      background: transparent;
+      color: #00ff88;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .platform-btn:hover {
+      background: #00ff88;
+      color: #0a0e27;
+      transform: scale(1.05);
+    }
+
+    .platform-btn.active {
+      background: #00ff88;
+      color: #0a0e27;
+      box-shadow: 0 0 15px #00ff88;
+    }
+
+    .create-post-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .create-post-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .create-post-content {
+      background: #0a0e27;
+      border: 2px solid #00ff88;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .create-post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #00ff88;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: #ff0055;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <span class="topbar-tag">HACKER HUB</span>
+        <h1>Cyber Nexus</h1>
+      </div>
+      <p>Zone d'échange pour CTF, pentests, exploits et résolutions de challenges en mode hacker.</p>
+    </header>
+
+    <section class="panel panel-glow">
+      <div class="section-title">
+        <span>🔗</span>
+        <h2>Pages thématiques</h2>
+      </div>
+      <div class="platforms-buttons">
+        <a class="platform-btn" href="../pages/rootme.html">Root Me</a>
+        <a class="platform-btn" href="../pages/hackthebox.html">HackTheBox</a>
+        <a class="platform-btn" href="../pages/tryhackme.html">TryHackMe</a>
+        <a class="platform-btn" href="../pages/web-exploitation.html">Web Exploitation</a>
+        <a class="platform-btn" href="../pages/osint.html">OSINT</a>
+        <a class="platform-btn" href="../pages/reverse-engineering.html">Reverse Engineering</a>
+        <a class="platform-btn" href="../pages/cryptographie.html">Cryptographie</a>
+      </div>
+    </section>
+
+    <main class="layout">
+      <!-- Filtres et recherche -->
+      <section class="panel panel-dark">
+        <div class="filters grid-2" style="margin-bottom: 20px;">
+          <div>
+            <label for="filter-author">🔍 Auteur</label>
+            <input id="filter-author" type="text" placeholder="Nom de l'auteur" />
+          </div>
+          <div>
+            <label for="filter-search">🔎 Recherche</label>
+            <input id="filter-search" type="search" placeholder="Titre ou contenu..." />
+          </div>
+          <div>
+            <label for="filter-sort">📊 Trier par</label>
+            <select id="filter-sort">
+              <option value="created_at">Récents</option>
+              <option value="updated_at">Mis à jour</option>
+              <option value="title">Alphabétique</option>
+            </select>
+          </div>
+          <div style="display: flex; align-items: flex-end;">
+            <button class="primary" onclick="toggleCreatePost()" style="width: 100%; padding: 10px;">
+              ➕ Nouveau Post
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Liste des posts -->
+      <section class="panel panel-dark">
+        <div class="section-title">
+          <span>📌</span>
+          <h2 id="current-platform-title">Tous les posts</h2>
+        </div>
+        <div id="post-list" class="post-list"></div>
+      </section>
+
+    </main>
+
+    <!-- Modal de création de post -->
+    <div class="create-post-modal" id="create-post-modal">
+      <div class="create-post-content">
+        <div class="create-post-header">
+          <h2>🚀 Créer un nouveau post</h2>
+          <button class="close-btn" onclick="toggleCreatePost()">✕</button>
+        </div>
+        <form id="post-form" class="form-block">
+          <input type="hidden" id="selected-post-id" />
+
+          <label for="post-title">📝 Titre</label>
+          <input id="post-title" type="text" required placeholder="Titre du post..." />
+
+          <label for="post-content">📄 Contenu</label>
+          <textarea id="post-content" required placeholder="Décrivez votre question ou votre solution..."></textarea>
+
+          <label for="post-image">🖼️ Image (URL optionnelle)</label>
+          <input id="post-image" type="text" placeholder="https://..." />
+
+          <label for="post-categories">🏷️ Plateforme/Catégorie</label>
+          <select id="post-categories" required>
+            <option value="">-- Choisir une plateforme --</option>
+          </select>
+
+          <label for="post-author-name">👤 Nom de l'auteur</label>
+          <input id="post-author-name" type="text" placeholder="Pseudo ou nom" />
+
+          <div class="row gap">
+            <div>
+              <label for="post-visibility">🔒 Visibilité</label>
+              <select id="post-visibility">
+                <option value="public">Public</option>
+                <option value="private">Privé</option>
+              </select>
+            </div>
+            <div>
+              <label for="post-moderation">✅ Statut</label>
+              <select id="post-moderation">
+                <option value="pending">En attente</option>
+                <option value="approved">Approuvé</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="post-user-id">👤 Ton ID utilisateur</label>
+          <input id="post-user-id" type="number" value="1" />
+
+          <button type="submit" class="primary">Publier 🚀</button>
+        </form>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>CTF & Cybersecurity Community - root@hacker ~ $ share your skills 🔐</p>
+    </footer>
+  </div>
+  <script src="../static/js/index.js"></script>
+</body>
+</html>

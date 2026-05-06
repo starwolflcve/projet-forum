@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptographie - Cyber Nexus</title>
+  <link rel="stylesheet" href="../static/css/style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <span class="topbar-tag">CRYPTOGRAPHIE</span>
+        <h1>Cryptographie - Chiffres & Déchiffrement</h1>
+      </div>
+      <p>Section pour les challenges de crypto, les algorithmes classiques et les attaques sur les codes secrets.</p>
+    </header>
+
+    <main class="layout">
+      <section class="panel panel-glow">
+        <div class="section-title">
+          <span>01</span>
+          <h2>Types de chiffrages</h2>
+        </div>
+        <div class="post-list">
+          <article class="post-card"><h3>🔐 Chiffres classiques</h3><p>Caesar, Vigenère, substitution et autres codes historiques.</p></article>
+          <article class="post-card"><h3>🔎 Cryptanalyse</h3><p>Techniques pour casser des chiffres et retrouver des clés faibles.</p></article>
+          <article class="post-card"><h3>🧮 Crypto moderne</h3><p>RSA, AES, signatures et l’importance des implémentations correctes.</p></article>
+          <article class="post-card"><h3>📝 Défis CTF</h3><p>Stratégies pour résoudre rapidement les challenges de crypto.</p></article>
+        </div>
+      </section>
+
+      <section class="panel panel-dark">
+        <div class="section-title">
+          <span>02</span>
+          <h2>Retour à l’accueil</h2>
+        </div>
+        <a class="platform-btn" id="back-home" href="/">← Retour au forum principal</a>
+      </section>
+    </main>
+  </div>
+<script>
+if (window.location.protocol === "file:") {
+  const back = document.getElementById("back-home");
+  if (back) back.href = "../templates/index.html";
+}
+</script>
+</body>
+</html>

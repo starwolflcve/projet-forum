@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Root Me - Cyber Nexus</title>
+  <link rel="stylesheet" href="../static/css/style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <span class="topbar-tag">ROOT ME</span>
+        <h1>Root Me - Défis & Astuces</h1>
+      </div>
+      <p>Discussion dédiée à la plateforme Root Me : challenges, solutions, catégories, et partage de techniques.</p>
+    </header>
+
+    <main class="layout">
+      <section class="panel panel-glow">
+        <div class="section-title">
+          <span>01</span>
+          <h2>Sujets Root Me</h2>
+        </div>
+        <div class="post-list">
+          <article class="post-card"><h3>💡 Experte en Web</h3><p>Partager vos méthodes pour les challenges Web (XSS, SQLi, SSRF, etc.).</p></article>
+          <article class="post-card"><h3>🔐 Challenges Crypto</h3><p>Discussions sur les systèmes de chiffrement utilisés dans Root Me et leurs contournements.</p></article>
+          <article class="post-card"><h3>🐧 Escalade Linux</h3><p>Stratégies pour obtenir le flag root sur les machines Linux.</p></article>
+          <article class="post-card"><h3>🛡️ Sécurité des infrastructures</h3><p>Réflexions sur l’habituel et le piège dans les exercices d’analyse trafic et forensics.</p></article>
+        </div>
+      </section>
+
+      <section class="panel panel-dark">
+        <div class="section-title">
+          <span>02</span>
+          <h2>Retour à l’accueil</h2>
+        </div>
+        <a class="platform-btn" id="back-home" href="/">← Retour au forum principal</a>
+      </section>
+    </main>
+  </div>
+<script>
+if (window.location.protocol === "file:") {
+  const back = document.getElementById("back-home");
+  if (back) back.href = "../templates/index.html";
+}
+</script>
+</body>
+</html>

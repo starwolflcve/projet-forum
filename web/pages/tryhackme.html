@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TryHackMe - Cyber Nexus</title>
+  <link rel="stylesheet" href="../static/css/style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <span class="topbar-tag">TRYHACKME</span>
+        <h1>TryHackMe - Labs & Roadmaps</h1>
+      </div>
+      <p>Espace pour s’entraider sur les labs TryHackMe, les parcours et les exercices pratiques.</p>
+    </header>
+
+    <main class="layout">
+      <section class="panel panel-glow">
+        <div class="section-title">
+          <span>01</span>
+          <h2>Thèmes TryHackMe</h2>
+        </div>
+        <div class="post-list">
+          <article class="post-card"><h3>📚 Roadmaps</h3><p>Guides de parcours pour débuter en OSINT, pentest et Sécurité offensive.</p></article>
+          <article class="post-card"><h3>🧪 Labs</h3><p>Discussions sur les labs pratiques et les approches pas à pas.</p></article>
+          <article class="post-card"><h3>⚙️ Outils</h3><p>Quels outils installer pour TryHackMe et comment configurer votre VM.</p></article>
+          <article class="post-card"><h3>💬 Communauté</h3><p>Partage des meilleures salles et conseils de progression.</p></article>
+        </div>
+      </section>
+
+      <section class="panel panel-dark">
+        <div class="section-title">
+          <span>02</span>
+          <h2>Retour à l’accueil</h2>
+        </div>
+        <a class="platform-btn" id="back-home" href="/">← Retour au forum principal</a>
+      </section>
+    </main>
+  </div>
+<script>
+if (window.location.protocol === "file:") {
+  const back = document.getElementById("back-home");
+  if (back) back.href = "../templates/index.html";
+}
+</script>
+</body>
+</html>
