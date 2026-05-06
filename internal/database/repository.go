@@ -395,3 +395,51 @@ func DeleteCommentByID(db *sql.DB, commentID int) error {
 	_, err := db.Exec(query, commentID)
 	return err
 }
+
+func CreateCategory(db *sql.DB, name string) error {
+	query := `
+	INSERT INTO categories (name)
+	VALUES (?)
+	`
+	_, err := db.Exec(query, name)
+	return err
+}
+
+func DeleteCategoryByID(db *sql.DB, categoryID int) error {
+	query := `DELETE FROM categories WHERE id = ?`
+	_, err := db.Exec(query, categoryID)
+	return err
+}
+
+func ListCategories(db *sql.DB) ([]models.Category, error) {
+	query := `
+	SELECT id, name
+	FROM categories
+	ORDER BY name ASC
+	`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []models.Category
+
+	for rows.Next() {
+		var category models.Category
+
+		err := rows.Scan(&category.ID, &category.Name)
+		if err != nil {
+			return nil, err
+		}
+
+		categories = append(categories, category)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return categories, nil
+}

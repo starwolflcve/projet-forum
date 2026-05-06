@@ -28,6 +28,10 @@ func main() {
 	http.HandleFunc("/moderation/reject", handlers.RejectReportHandler(db))
 	http.HandleFunc("/moderation/delete", handlers.DeleteReportedContentHandler(db))
 
+	http.HandleFunc("/admin/categories", handlers.AdminCategoriesHandler(db, tmpl))
+	http.HandleFunc("/admin/categories/create", handlers.CreateCategoryHandler(db))
+	http.HandleFunc("/admin/categories/delete", handlers.DeleteCategoryHandler(db))
+
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
