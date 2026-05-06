@@ -7,6 +7,7 @@ import (
 
 	"forum/internal/database"
 	"forum/internal/middleware"
+	"forum/internal/models"
 )
 
 func ActivityHandler(db *sql.DB, tmpl *template.Template) http.HandlerFunc {
@@ -22,10 +23,22 @@ func ActivityHandler(db *sql.DB, tmpl *template.Template) http.HandlerFunc {
 			return
 		}
 
-		activities, err := database.ListActivityByUserID(db, userID)
+		activityMap, err := database.ListActivityByUserID(db, userID)
 		if err != nil {
 			http.Error(w, "Erreur lors de la récupération de l'activité", http.StatusInternalServerError)
 			return
+		}
+
+		// Aplatir la map en une slice d'activités
+		var activities []models.ActivityItem
+		if posts, ok := activityMap["posts"]; ok {
+			activities = append(activities, posts...)
+		}
+		if reactions, ok := activityMap["reactions"]; ok {
+			activities = append(activities, reactions...)
+		}
+		if comments, ok := activityMap["comments"]; ok {
+			activities = append(activities, comments...)
 		}
 
 		data := map[string]interface{}{
